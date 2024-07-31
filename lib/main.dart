@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:bloc_inc_dec/blocs/color/color_bloc.dart';
 import 'package:bloc_inc_dec/blocs/theme/theme_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,8 +19,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<ColorBloc>(
+          create: (context) => ColorBloc(),
+        ),
         BlocProvider<CounterBloc>(
-          create: (context) => CounterBloc(),
+          create: (context) => CounterBloc(
+            colorBloc: context.read<ColorBloc>(),
+          ),
         ),
         BlocProvider<ThemeBloc>(
           create: (context) => ThemeBloc(),
@@ -55,6 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
+      backgroundColor: context.watch<ColorBloc>().state.color,
       body: BlocListener<CounterBloc, CounterState>(
         listener: (context, state) {
           if (state.counter == 3) {
@@ -91,7 +98,27 @@ class _MyHomePageState extends State<MyHomePage> {
                       .read<ThemeBloc>()
                       .add(ChangeThemeEvent(randInt: randInt));
                 },
-              )
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                child: const Text(
+                  'Change Color',
+                  style: TextStyle(fontSize: 24),
+                ),
+                onPressed: () {
+                  context.read<ColorBloc>().add(ChangeColorEvent());
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                child: const Text(
+                  'Increment Counter',
+                  style: TextStyle(fontSize: 24),
+                ),
+                onPressed: () {
+                  context.read<CounterBloc>().add(ChangeCounterEvent());
+                },
+              ),
             ],
           ),
         ),

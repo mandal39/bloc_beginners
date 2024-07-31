@@ -10,3 +10,5 @@ class CounterEvent extends Equatable {
 class IncrementCounterEvent extends CounterEvent {}
 
 class DecrementCounterEvent extends CounterEvent {}
+
+class ChangeCounterEvent extends CounterEvent {}
