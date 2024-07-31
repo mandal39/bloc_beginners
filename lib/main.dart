@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:bloc_inc_dec/blocs/color/color_bloc.dart';
 import 'package:bloc_inc_dec/blocs/theme/theme_bloc.dart';
+import 'package:bloc_inc_dec/show_me_counter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
                 ? ThemeData.light()
                 : ThemeData.dark(),
             home: const MyHomePage(title: 'Theme'),
+            debugShowCheckedModeBanner: false,
           );
         },
       ),
@@ -92,13 +94,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text(
-                  'You have pushed the button this many times:',
-                ),
-                Text(
-                  '${context.watch<CounterBloc>().state.counter}',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
                 ElevatedButton(
                   child: const Text(
                     'ChangeTheme',
@@ -134,6 +129,21 @@ class _MyHomePageState extends State<MyHomePage> {
                         .add(ChangeCounterEvent(incrementSize: incrementSize));
                   },
                 ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  child: const Text(
+                    'Show Me Counter',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (contex) {
+                        return ShowMeCounter();
+                      }),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -146,6 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 BlocProvider.of<CounterBloc>(context)
                     .add(IncrementCounterEvent());
               },
+              heroTag: 'increment',
               tooltip: 'Increment',
               child: const Icon(Icons.add),
             ),
@@ -154,6 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 BlocProvider.of<CounterBloc>(context)
                     .add(DecrementCounterEvent());
               },
+              heroTag: 'decrement',
               tooltip: 'Decrement',
               child: const Icon(Icons.remove),
             ),
