@@ -23,9 +23,7 @@ class MyApp extends StatelessWidget {
           create: (context) => ColorBloc(),
         ),
         BlocProvider<CounterBloc>(
-          create: (context) => CounterBloc(
-            colorBloc: context.read<ColorBloc>(),
-          ),
+          create: (context) => CounterBloc(),
         ),
         BlocProvider<ThemeBloc>(
           create: (context) => ThemeBloc(),
@@ -55,94 +53,112 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int incrementSize = 1;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      backgroundColor: context.watch<ColorBloc>().state.color,
-      body: BlocListener<CounterBloc, CounterState>(
-        listener: (context, state) {
-          if (state.counter == 3) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  content: Text('counter is ${state.counter}'),
-                );
-              },
-            );
-          }
-        },
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                'You have pushed the button this many times:',
-              ),
-              Text(
-                '${context.watch<CounterBloc>().state.counter}',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              ElevatedButton(
-                child: const Text(
-                  'ChangeTheme',
-                  style: TextStyle(fontSize: 24),
-                ),
-                onPressed: () {
-                  final int randInt = Random().nextInt(10);
-                  print(randInt);
-                  context
-                      .read<ThemeBloc>()
-                      .add(ChangeThemeEvent(randInt: randInt));
+    return BlocListener<ColorBloc, ColorState>(
+      listener: (context, colorState) {
+        if (colorState.color == Colors.red) {
+          incrementSize = 1;
+        } else if (colorState.color == Colors.green) {
+          incrementSize = 10;
+        } else if (colorState.color == Colors.blue) {
+          incrementSize = 100;
+          context
+              .read<CounterBloc>()
+              .add(ChangeCounterEvent(incrementSize: incrementSize));
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        backgroundColor: context.watch<ColorBloc>().state.color,
+        body: BlocListener<CounterBloc, CounterState>(
+          listener: (context, state) {
+            if (state.counter == 3) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Text('counter is ${state.counter}'),
+                  );
                 },
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                child: const Text(
-                  'Change Color',
-                  style: TextStyle(fontSize: 24),
+              );
+            }
+          },
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text(
+                  'You have pushed the button this many times:',
                 ),
-                onPressed: () {
-                  context.read<ColorBloc>().add(ChangeColorEvent());
-                },
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                child: const Text(
-                  'Increment Counter',
-                  style: TextStyle(fontSize: 24),
+                Text(
+                  '${context.watch<CounterBloc>().state.counter}',
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
-                onPressed: () {
-                  context.read<CounterBloc>().add(ChangeCounterEvent());
-                },
-              ),
-            ],
+                ElevatedButton(
+                  child: const Text(
+                    'ChangeTheme',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  onPressed: () {
+                    final int randInt = Random().nextInt(10);
+                    print(randInt);
+                    context
+                        .read<ThemeBloc>()
+                        .add(ChangeThemeEvent(randInt: randInt));
+                  },
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  child: const Text(
+                    'Change Color',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  onPressed: () {
+                    context.read<ColorBloc>().add(ChangeColorEvent());
+                  },
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  child: const Text(
+                    'Increment Counter',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  onPressed: () {
+                    context
+                        .read<CounterBloc>()
+                        .add(ChangeCounterEvent(incrementSize: incrementSize));
+                  },
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              BlocProvider.of<CounterBloc>(context)
-                  .add(IncrementCounterEvent());
-            },
-            tooltip: 'Increment',
-            child: const Icon(Icons.add),
-          ),
-          FloatingActionButton(
-            onPressed: () {
-              BlocProvider.of<CounterBloc>(context)
-                  .add(DecrementCounterEvent());
-            },
-            tooltip: 'Decrement',
-            child: const Icon(Icons.remove),
-          ),
-        ],
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+              onPressed: () {
+                BlocProvider.of<CounterBloc>(context)
+                    .add(IncrementCounterEvent());
+              },
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            ),
+            FloatingActionButton(
+              onPressed: () {
+                BlocProvider.of<CounterBloc>(context)
+                    .add(DecrementCounterEvent());
+              },
+              tooltip: 'Decrement',
+              child: const Icon(Icons.remove),
+            ),
+          ],
+        ),
       ),
     );
   }

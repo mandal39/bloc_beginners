@@ -11,4 +11,12 @@ class IncrementCounterEvent extends CounterEvent {}
 
 class DecrementCounterEvent extends CounterEvent {}
 
-class ChangeCounterEvent extends CounterEvent {}
+class ChangeCounterEvent extends CounterEvent {
+  final int incrementSize;
+  ChangeCounterEvent({
+    required this.incrementSize,
+  });
+
+  @override
+  List<Object> get props => [incrementSize];
+}
