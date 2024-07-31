@@ -37,8 +37,11 @@ class MyApp extends StatelessWidget {
             theme: state.appTheme == AppTheme.light
                 ? ThemeData.light()
                 : ThemeData.dark(),
-            home: const MyHomePage(title: 'Theme'),
             debugShowCheckedModeBanner: false,
+            routes: {
+              '/': (context) => MyHomePage(title: 'NamedRoute'),
+              '/counter': (context) => ShowMeCounter(),
+            },
           );
         },
       ),
